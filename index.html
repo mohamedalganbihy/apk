@@ -1,4 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -137,7 +137,7 @@
     header > div { position:relative; }
     header > div:after { content:""; position:absolute; inset:auto 1rem -1px 1rem; height:1px; background:linear-gradient(90deg,transparent,rgba(57,185,255,.4),rgba(231,183,74,.45),transparent); pointer-events:none; }
     header .w-9.h-9.rounded-xl.bg-sky-500\/15 { background:linear-gradient(145deg,rgba(231,183,74,.18),rgba(57,185,255,.12)) !important; border-color:rgba(231,183,74,.35) !important; color:#f2c65c !important; box-shadow:0 0 16px rgba(231,183,74,.08); }
-    .neon-customer-name { color:#48bdff !important; text-shadow:0 0 10px rgba(57,185,255,.25) !important; }
+    .neon-customer-name { color:#e8bd52 !important; text-shadow:0 0 10px rgba(232,189,82,.25) !important; }
     #customers-list-container > div { background:linear-gradient(145deg,#0d1526,#080d18) !important; border-color:rgba(57,185,255,.16) !important; box-shadow:0 10px 24px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.035) !important; }
     #customers-list-container > div:hover { border-color:rgba(57,185,255,.4) !important; transform:translateY(-1px); }
     .neon-btn { background:linear-gradient(135deg,#147ac4,#1763df) !important; border:1px solid rgba(57,185,255,.28); box-shadow:0 6px 20px rgba(20,122,196,.22) !important; }
@@ -199,7 +199,7 @@
     #customers-list-container{gap:11px!important}
     #customers-list-container>div{border-radius:18px!important;background:linear-gradient(145deg,#101b2d,#070d18)!important;border:1px solid #3b8acb33!important;box-shadow:0 9px 25px #0006,inset 0 1px #ffffff08!important}
     #customers-list-container>div:before{width:3px!important;background:linear-gradient(#42c6ff,#2563eb,#e6b63f)!important;opacity:.85!important}
-    .neon-customer-name{color:#42c5ff!important;text-shadow:0 0 12px #38bdf82b!important;font-weight:900!important}
+    .neon-customer-name{color:#e8bd52!important;text-shadow:0 0 12px #e8bd522b!important;font-weight:900!important}
     .neon-btn{background:linear-gradient(125deg,#147dc9,#1763e5)!important;border:1px solid #42baff45!important;box-shadow:0 6px 20px #147dc933!important}
     #app-install-banner{border-radius:18px!important}
     .install-lion-mark{width:42px;height:42px;border-radius:12px;overflow:hidden;border:1px solid #e7b64266;background:#050811;flex-shrink:0}
@@ -230,7 +230,7 @@
     #view-customers>.dashboard-stat-grid>div span:nth-child(2){font-size:clamp(18px,2.5vw,26px)!important;font-variant-numeric:tabular-nums}
     .dashboard-total-stat{min-height:88px!important;border-radius:16px!important;padding:10px 6px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-shadow:0 8px 24px #0006,inset 0 1px #ffffff0a!important}
     #customers-list-container>div{border-radius:17px!important;min-height:84px!important;padding:13px!important;background:linear-gradient(145deg,#0d1b31,#070d18)!important;border:1px solid #2e5c8b77!important;box-shadow:0 8px 22px #0006,inset 0 1px #ffffff09!important}
-    .neon-customer-name{font-size:clamp(14px,2vw,18px)!important;color:#43c4ff!important;font-weight:900!important;text-shadow:0 0 10px #38bdf82a!important}
+    .neon-customer-name{font-size:clamp(14px,2vw,18px)!important;color:#e8bd52!important;font-weight:900!important;text-shadow:0 0 10px #e8bd522a!important}
     nav{padding-bottom:env(safe-area-inset-bottom)!important}
     @media(max-width:480px){.dashboard-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#elganbihy-hero{height:164px!important}.hero-copy{inset:0 24% 0 24%!important;padding:4px!important}.hero-kicker{font-size:7px!important}.hero-title{font-size:25px!important}.hero-subtitle{font-size:11px!important}.hero-ribbon{font-size:8px!important;padding:2px 6px!important}.dashboard-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-total-stat{min-height:76px!important}#view-customers>.grid.grid-cols-3>div{min-height:76px!important}}
     @media(min-width:640px){#elganbihy-hero{height:220px!important}.hero-copy{inset:0 30% 0 24%!important}.dashboard-stat-grid{margin-top:0!important}}
@@ -251,12 +251,7 @@
 
 </head>
 <body class="antialiased selection:bg-sky-500/30 selection:text-sky-200">
-  <div id="app-splash" aria-label="جاري فتح الجنبيهي للصيانة">
-    <div class="splash-mark"><img src="icon-192.png" alt="شعار الأسد" /></div>
-    <div class="splash-title">الجنبيهي للصيانة</div>
-    <div class="splash-sub">إدارة الصيانة والعملاء</div>
-    <div class="mt-5 w-28 h-1 rounded-full overflow-hidden bg-slate-800"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-sky-500 to-amber-400 animate-pulse"></div></div>
-  </div>
+
 
   <!-- Top Header (Connected badge removed) -->
   <header class="sticky top-0 z-30 bg-[#060913]/90 backdrop-blur-xl border-b border-slate-800/80">
@@ -1677,9 +1672,7 @@
     let deferredInstallPrompt = null;
     const installBanner = document.getElementById('app-install-banner');
     const installBtn = document.getElementById('app-install-button');
-    const splash = document.getElementById('app-splash');
     window.addEventListener('load', () => {
-      setTimeout(() => splash && splash.classList.add('hide'), 1100);
       if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./service-worker.js').catch(() => {});
       }
@@ -1703,3 +1696,9 @@
   </script>
 </body>
 </html>
+
+<style id="final-brand-polish">
+#app-splash{display:none!important}
+.neon-customer-name{color:#e8bd52!important;text-shadow:0 0 10px rgba(232,189,82,.25)!important;font-weight:900!important}
+#customers-list-container>div:before{background:linear-gradient(#e8bd52,#b88624,#38bdf8)!important}
+</style>
