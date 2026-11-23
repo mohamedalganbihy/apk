@@ -1,5 +1,5 @@
 const CACHE_NAME = 'elganbihy-repair-app-v7';
-const APP_SHELL = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png', './hero-banner.jpg'];
+const APP_SHELL = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png', './hero-banner.png'];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
