@@ -1,0 +1,1472 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>سنترال محمد الجنبيهي - إدارة الصيانة والعملاء</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            obsidian: '#060913',
+            carddark: '#0d1324',
+            cardhover: '#121a30',
+            neonblue: '#38bdf8',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #060913;
+      background-image:
+        radial-gradient(circle at 85% 5%, rgba(56, 189, 248, 0.09) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 45%);
+      color: #f1f5f9;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .neon-customer-name {
+      color: #38bdf8;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+    }
+    .neon-card-glow {
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+    .neon-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.25);
+    }
+    .neon-btn:hover {
+      box-shadow: 0 6px 22px rgba(56, 189, 248, 0.4);
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060913;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 10px;
+    }
+    .safe-bottom {
+      padding-bottom: calc(5.8rem + env(safe-area-inset-bottom));
+    }
+    .modal-enter {
+      animation: modalFadeIn 0.2s ease-out forwards;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-sky-500/30 selection:text-sky-200">
+
+  <!-- Top Header (Connected badge removed) -->
+  <header class="sticky top-0 z-30 bg-[#060913]/90 backdrop-blur-xl border-b border-slate-800/80">
+    <div class="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+      <!-- Right Side: Back Button or Shop Title -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button id="btn-back-customers" onclick="closeCustomerProfile()" class="hidden items-center justify-center w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-sky-400 border border-slate-700/70 transition active:scale-95 shrink-0" title="العودة لقائمة العملاء">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <div class="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-400 border border-sky-400/30 flex items-center justify-center shadow-inner shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        </div>
+        <div class="truncate">
+          <h1 id="header-title" class="text-base sm:text-lg font-extrabold text-white leading-tight truncate">سنترال محمد الجنبيهي</h1>
+          <p id="header-subtitle" class="text-[11px] font-medium text-slate-400 leading-tight">إدارة الصيانة والعملاء • 01008887741</p>
+        </div>
+      </div>
+
+      <!-- Left Side: Quick Add Button Only -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="openNewDeviceModal()" class="neon-btn inline-flex items-center gap-1.5 text-white text-xs sm:text-sm font-extrabold px-3.5 py-2 rounded-xl transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          <span>استلام جهاز</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Firebase Alert Banner -->
+  <div id="db-alert-banner" class="hidden max-w-2xl mx-auto px-4 pt-3">
+    <div class="bg-amber-950/60 border border-amber-500/35 rounded-2xl p-3.5 flex items-start justify-between gap-3 text-xs text-amber-200">
+      <div class="flex items-start gap-2.5">
+        <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div>
+          <p id="db-alert-title" class="font-bold text-sm text-amber-300">ملاحظة قاعدة البيانات</p>
+          <p id="db-alert-desc" class="text-amber-100/80 mt-0.5 leading-relaxed"></p>
+        </div>
+      </div>
+      <button onclick="document.getElementById('db-alert-banner').classList.add('hidden')" class="text-amber-300 hover:text-white font-bold px-1.5">✕</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-2xl mx-auto px-4 pt-4 safe-bottom">
+
+    <!-- ==================== VIEW 1: CUSTOMERS LIST (HOME) ==================== -->
+    <section id="view-customers" class="space-y-4">
+      <!-- Top Summary Cards: Repairing replaces Customers count -->
+      <div class="grid grid-cols-3 gap-2.5">
+        <div onclick="setStatusFilter('repairing')" class="bg-[#0d1324] hover:bg-[#121a30] rounded-2xl p-3.5 border border-sky-500/30 neon-card-glow cursor-pointer transition">
+          <span class="text-[11px] font-bold text-sky-400 block">قيد الصيانة</span>
+          <span id="stat-repairing-devices" class="text-xl font-black text-sky-300 mt-0.5 block">0</span>
+        </div>
+        <div onclick="setStatusFilter('checking')" class="bg-[#0d1324] hover:bg-[#121a30] rounded-2xl p-3.5 border border-amber-500/25 neon-card-glow cursor-pointer transition">
+          <span class="text-[11px] font-bold text-amber-400 block">قيد الفحص</span>
+          <span id="stat-checking-devices" class="text-xl font-black text-amber-300 mt-0.5 block">0</span>
+        </div>
+        <div onclick="setStatusFilter('ready')" class="bg-[#0d1324] hover:bg-[#121a30] rounded-2xl p-3.5 border border-emerald-500/25 neon-card-glow cursor-pointer transition">
+          <span class="text-[11px] font-bold text-emerald-400 block">جاهز للتسليم</span>
+          <span id="stat-ready-devices" class="text-xl font-black text-emerald-300 mt-0.5 block">0</span>
+        </div>
+      </div>
+
+      <!-- Search Box + Device Status Filter Side-by-Side -->
+      <div class="bg-[#0d1324] rounded-2xl p-3 border border-slate-800/90 neon-card-glow space-y-2.5">
+        <div class="flex items-center gap-2">
+          <!-- Search Input -->
+          <div class="relative flex-1 min-w-0">
+            <input type="text" id="customer-search-input" oninput="renderCustomersList()" placeholder="ابحث بالاسم، الهاتف، أو الموديل..." class="w-full bg-[#060913] border border-slate-800 rounded-xl py-2.5 pr-9 pl-7 text-xs sm:text-sm font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 transition" />
+            <svg class="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <button id="btn-clear-search" onclick="clearSearch()" class="hidden absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs font-bold">✕</button>
+          </div>
+
+          <!-- Device Status Filter Dropdown right next to Search -->
+          <select id="device-status-filter" onchange="renderCustomersList()" aria-label="فلتر حالة الأجهزة" class="bg-[#060913] border border-slate-700/80 text-sky-300 text-xs font-extrabold rounded-xl py-2.5 px-2.5 focus:outline-none focus:border-sky-400 shrink-0 cursor-pointer">
+            <option value="all">كل الحالات</option>
+            <option value="checking">قيد الفحص</option>
+            <option value="repairing">قيد الصيانة</option>
+            <option value="ready">جاهز للتسليم</option>
+            <option value="delivered">تم التسليم</option>
+            <option value="rejected">مرفوض / مرتجع</option>
+          </select>
+        </div>
+
+        <!-- Secondary Quick Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+          <button onclick="setCustomerFilter('all')" data-filter="all" class="filter-pill px-3 py-1 rounded-lg text-[11px] font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/40 whitespace-nowrap transition">الكل</button>
+          <button onclick="setCustomerFilter('active')" data-filter="active" class="filter-pill px-3 py-1 rounded-lg text-[11px] font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 whitespace-nowrap transition">بالورشة حالياً</button>
+          <button onclick="setCustomerFilter('ready')" data-filter="ready" class="filter-pill px-3 py-1 rounded-lg text-[11px] font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 whitespace-nowrap transition">جاهز للتسليم</button>
+          <button onclick="setCustomerFilter('debt')" data-filter="debt" class="filter-pill px-3 py-1 rounded-lg text-[11px] font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 whitespace-nowrap transition">عليه مستحقات (مُسلّم)</button>
+        </div>
+      </div>
+
+      <!-- Customers List Container -->
+      <div id="customers-list-container" class="space-y-2.5"></div>
+    </section>
+
+    <!-- ==================== VIEW 2: CUSTOMER DEDICATED PROFILE ==================== -->
+    <section id="view-customer-profile" class="hidden space-y-4">
+      <div class="bg-[#0d1324] rounded-2xl p-4 border border-slate-800/90 neon-card-glow">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div id="profile-avatar" class="w-12 h-12 rounded-2xl bg-sky-500/15 text-sky-400 border border-sky-400/35 flex items-center justify-center text-lg font-black shrink-0" style="box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);">
+              م
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 id="profile-name" class="text-lg font-black neon-customer-name truncate">اسم العميل</h2>
+                <button onclick="openEditCustomerModal()" class="text-slate-400 hover:text-sky-400 p-1 rounded-lg transition" title="تعديل بيانات العميل">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                </button>
+              </div>
+              <p id="profile-phone" class="text-sm font-semibold text-slate-400 mt-0.5">01000000000</p>
+            </div>
+          </div>
+
+          <div id="profile-finance-badge-container" class="shrink-0"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t border-slate-800/80">
+          <a id="profile-call-btn" href="#" class="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold transition">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            <span>اتصال</span>
+          </a>
+          <button onclick="sendCustomerWhatsAppGreeting()" class="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
+            <span>واتساب</span>
+          </button>
+          <button onclick="sendCustomerStatementWhatsApp()" class="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>كشف حساب</span>
+          </button>
+        </div>
+      </div>
+
+      <button onclick="openNewDeviceModalForCurrentCustomer()" class="neon-btn w-full py-3.5 px-4 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 transition active:scale-[0.99]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        <span>إضافة جهاز جديد لهذا العميل</span>
+      </button>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-sm font-extrabold text-slate-200">أجهزة العميل (<span id="profile-devices-count" class="text-sky-400">0</span>)</h3>
+          <span class="text-[11px] font-medium text-slate-500">تغيير الحالة أو إضافة دفعة لكل جهاز</span>
+        </div>
+        <div id="profile-devices-container" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: TASKS & SPARE PARTS SHORTAGES ==================== -->
+    <section id="view-tasks" class="hidden space-y-4">
+      <div class="bg-[#0d1324] p-1.5 rounded-2xl border border-slate-800/90 grid grid-cols-2 gap-1.5">
+        <button id="subtab-btn-tasks" onclick="switchTasksSubtab('tasks')" class="py-2 rounded-xl text-xs font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/35 transition">المهام المطلوبة (<span id="count-pending-tasks">0</span>)</button>
+        <button id="subtab-btn-shortages" onclick="switchTasksSubtab('shortages')" class="py-2 rounded-xl text-xs font-extrabold bg-transparent text-slate-400 hover:text-slate-200 transition">نواقص قطع الغيار (<span id="count-shortages">0</span>)</button>
+      </div>
+
+      <div id="panel-daily-tasks" class="space-y-3">
+        <form onsubmit="addTask(event)" class="bg-[#0d1324] p-3 rounded-2xl border border-slate-800/90 flex gap-2">
+          <input type="text" id="new-task-input" required placeholder="أضف مهمة صيانة مطلوبة (مثال: تسليم شاشة A52)..." class="flex-1 bg-[#060913] border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+          <button type="submit" class="neon-btn text-white font-bold text-xs px-4 rounded-xl shrink-0 transition">إضافة</button>
+        </form>
+        <div id="tasks-list-container" class="space-y-2"></div>
+      </div>
+
+      <div id="panel-shortages" class="hidden space-y-3">
+        <form onsubmit="addShortage(event)" class="bg-[#0d1324] p-3.5 rounded-2xl border border-slate-800/90 space-y-2.5">
+          <div class="grid grid-cols-3 gap-2">
+            <input type="text" id="shortage-name-input" required placeholder="اسم القطعة (مثال: فلاتة شحن نوت 10)" class="col-span-2 bg-[#060913] border border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+            <input type="number" id="shortage-qty-input" min="1" value="1" required placeholder="الكمية" class="bg-[#060913] border border-slate-800 rounded-xl px-3 py-2.5 text-sm font-bold text-white text-center focus:outline-none focus:border-sky-400" />
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <button type="submit" class="flex-1 neon-btn text-white font-bold text-xs py-2.5 rounded-xl transition">+ إضافة للنواقص</button>
+            <button type="button" onclick="sendShortagesToSupplierWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771z"/></svg>
+              <span>إرسال للمورد واتساب</span>
+            </button>
+          </div>
+        </form>
+        <div id="shortages-list-container" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: PROFITS & SUMMARY ==================== -->
+    <section id="view-profits" class="hidden space-y-4">
+      <div class="bg-[#0d1324] rounded-2xl p-4 border border-slate-800/90 neon-card-glow">
+        <div class="flex items-center justify-between mb-3.5">
+          <div>
+            <h2 class="text-base font-extrabold text-white">ملخص أرباح الصيانة</h2>
+            <p class="text-xs text-slate-400">يتم احتساب الأرباح الصافية من الأجهزة المُسلّمة فقط</p>
+          </div>
+          <button onclick="togglePrivacyMode()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-xs font-bold flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            <span id="privacy-btn-label">إخفاء الأرقام</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-emerald-400 block">صافي ربح المُسلّم</span>
+            <span id="profit-net-delivered" class="text-xl font-black text-emerald-300 mt-1 block">0 ج.م</span>
+          </div>
+          <div class="bg-sky-500/10 border border-sky-500/25 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-sky-400 block">إجمالي المحصّل نقداً</span>
+            <span id="profit-total-collected" class="text-xl font-black text-sky-300 mt-1 block">0 ج.م</span>
+          </div>
+          <div class="bg-rose-500/10 border border-rose-500/25 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-rose-400 block">ديون الأجهزة المُسلّمة</span>
+            <span id="profit-delivered-debts" class="text-xl font-black text-rose-300 mt-1 block">0 ج.م</span>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-slate-400 block">تكلفة قطع الغيار</span>
+            <span id="profit-parts-cost" class="text-xl font-black text-slate-200 mt-1 block">0 ج.م</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[#0d1324] rounded-2xl p-4 border border-slate-800/90 neon-card-glow space-y-3">
+        <h3 class="text-sm font-extrabold text-slate-200">آخر الأجهزة المُسلّمة وحساباتها</h3>
+        <div id="delivered-history-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 inset-x-0 z-30 bg-[#060913]/95 backdrop-blur-xl border-t border-slate-800/90">
+    <div class="max-w-2xl mx-auto px-4 h-16 grid grid-cols-3 gap-2 items-center">
+      <button onclick="switchMainTab('customers')" id="nav-customers" class="nav-btn flex flex-col items-center justify-center gap-1 py-1.5 rounded-xl text-sky-400 font-extrabold transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span class="text-[11px]">العملاء والأجهزة</span>
+      </button>
+
+      <button onclick="switchMainTab('tasks')" id="nav-tasks" class="nav-btn flex flex-col items-center justify-center gap-1 py-1.5 rounded-xl text-slate-500 hover:text-slate-300 font-bold transition relative">
+        <div class="relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span id="nav-tasks-badge" class="hidden absolute -top-1.5 -right-2 bg-rose-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </div>
+        <span class="text-[11px]">المهام والنواقص</span>
+      </button>
+
+      <button onclick="switchMainTab('profits')" id="nav-profits" class="nav-btn flex flex-col items-center justify-center gap-1 py-1.5 rounded-xl text-slate-500 hover:text-slate-300 font-bold transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="text-[11px]">الأرباح والحسابات</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== MODAL 1: ADD / EDIT DEVICE ==================== -->
+  <div id="modal-device" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#0d1324] w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-800 max-h-[92vh] flex flex-col modal-enter">
+      <div class="px-5 py-4 border-b border-slate-800/90 flex items-center justify-between shrink-0">
+        <h3 id="modal-device-title" class="text-base font-extrabold text-white">استلام جهاز صيانة جديد</h3>
+        <button onclick="closeModal('modal-device')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <form id="form-device" onsubmit="saveDeviceForm(event)" class="p-5 overflow-y-auto space-y-4">
+        <input type="hidden" id="dev-id" />
+        <input type="hidden" id="dev-customer-id" />
+
+        <div id="dev-customer-fields" class="bg-[#060913] p-3.5 rounded-2xl border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-sky-400">بيانات العميل</span>
+            <span id="dev-existing-customer-hint" class="hidden text-[11px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-md">عميل مسجل مسبقاً</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">اسم العميل *</label>
+              <input type="text" id="dev-cust-name" list="customers-datalist" oninput="onCustomerNameInput(this.value)" required placeholder="اكتب اسم العميل..." class="w-full bg-[#0d1324] border border-slate-700/80 rounded-xl px-3 py-2 text-sm font-bold text-sky-300 placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+              <datalist id="customers-datalist"></datalist>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">رقم الهاتف / واتساب *</label>
+              <input type="tel" id="dev-cust-phone" required placeholder="01xxxxxxxxx" class="w-full bg-[#0d1324] border border-slate-700/80 rounded-xl px-3 py-2 text-sm font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">نوع وموديل الجهاز *</label>
+              <input type="text" id="dev-model" required placeholder="مثال: Samsung A52s" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-sm font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">حالة الجهاز</label>
+              <select id="dev-status" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-sky-400">
+                <option value="checking">قيد الفحص</option>
+                <option value="repairing">قيد الصيانة</option>
+                <option value="ready">جاهز للتسليم</option>
+                <option value="delivered">تم التسليم</option>
+                <option value="rejected">مرفوض / مرتجع</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">العطل المطلوب إصلاحه *</label>
+            <input type="text" id="dev-issue" required placeholder="مثال: تغيير شاشة + باغة + فلاتة شحن" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-sm font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">السيريال / IMEI (اختياري)</label>
+              <input type="text" id="dev-imei" placeholder="آخر 4 أرقام أو السيريال" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">الملحقات المستلمة</label>
+              <input type="text" id="dev-accessories" placeholder="مثال: بيت شريحة + جراب" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">التكلفة للعميل</label>
+              <input type="number" id="dev-price" min="0" step="1" value="0" required class="w-full bg-sky-500/10 border border-sky-500/30 rounded-xl px-3 py-2 text-sm font-black text-sky-300 text-center focus:outline-none focus:border-sky-400" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">تكلفة القطعة</label>
+              <input type="number" id="dev-cost" min="0" step="1" value="0" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-slate-200 text-center focus:outline-none focus:border-sky-400" />
+            </div>
+            <div id="dev-initial-paid-wrapper">
+              <label class="block text-xs font-bold text-slate-300 mb-1">مدفوع مقدماً</label>
+              <input type="number" id="dev-initial-paid" min="0" step="1" value="0" class="w-full bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-2 text-sm font-black text-emerald-300 text-center focus:outline-none focus:border-emerald-400" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">ملاحظات فنية (اختياري)</label>
+            <textarea id="dev-notes" rows="2" placeholder="أي ملاحظات إضافية حول الجهاز أو الباسورد..." class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3 py-2 text-xs font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400"></textarea>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center gap-2.5">
+          <button type="submit" class="flex-1 neon-btn text-white font-extrabold text-sm py-3 rounded-xl transition">حفظ البيانات</button>
+          <button type="button" onclick="closeModal('modal-device')" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: ADD PAYMENT FOR DEVICE ==================== -->
+  <div id="modal-payment" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#0d1324] w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-800 modal-enter">
+      <div class="px-5 py-4 border-b border-slate-800/90 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-extrabold text-white">تسجيل دفعة سداد</h3>
+          <p id="pay-modal-device-label" class="text-xs font-semibold text-sky-400 mt-0.5">الجهاز</p>
+        </div>
+        <button onclick="closeModal('modal-payment')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <form onsubmit="submitPayment(event)" class="p-5 space-y-4">
+        <input type="hidden" id="pay-device-id" />
+
+        <div class="bg-[#060913] rounded-2xl p-3 border border-slate-800 grid grid-cols-3 text-center gap-2">
+          <div>
+            <span class="text-[11px] text-slate-400 block">الإجمالي</span>
+            <span id="pay-summary-total" class="text-sm font-black text-white">0</span>
+          </div>
+          <div>
+            <span class="text-[11px] text-slate-400 block">المدفوع</span>
+            <span id="pay-summary-paid" class="text-sm font-black text-emerald-400">0</span>
+          </div>
+          <div>
+            <span class="text-[11px] text-slate-400 block">المتبقي</span>
+            <span id="pay-summary-rem" class="text-sm font-black text-sky-400">0</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">المبلغ المدفوع الآن (ج.م) *</label>
+          <div class="flex gap-2">
+            <input type="number" id="pay-amount-input" min="1" step="1" required class="flex-1 bg-[#060913] border border-slate-700 rounded-xl px-3.5 py-2.5 text-base font-black text-white focus:outline-none focus:border-sky-400" />
+            <button type="button" onclick="fillRemainingPayment()" class="px-3 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 text-xs font-extrabold border border-sky-400/35 whitespace-nowrap">سداد المتبقي</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">بيان الدفعة (اختياري)</label>
+          <input type="text" id="pay-note-input" placeholder="مثال: دفعة عند الاستلام / سداد باقي الحساب" class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400" />
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm py-3 rounded-xl shadow-sm transition">تأكيد وتسجيل الدفعة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: EDIT CUSTOMER ==================== -->
+  <div id="modal-edit-customer" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#0d1324] w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-800 modal-enter">
+      <div class="px-5 py-4 border-b border-slate-800/90 flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-white">تعديل بيانات العميل</h3>
+        <button onclick="closeModal('modal-edit-customer')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold">✕</button>
+      </div>
+      <form onsubmit="saveCustomerEdit(event)" class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">اسم العميل *</label>
+          <input type="text" id="edit-cust-name" required class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-extrabold text-sky-300 focus:outline-none focus:border-sky-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">رقم الهاتف *</label>
+          <input type="tel" id="edit-cust-phone" required class="w-full bg-[#060913] border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-sky-400" />
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="submit" class="flex-1 neon-btn text-white font-extrabold text-sm py-3 rounded-xl transition">حفظ التعديلات</button>
+          <button type="button" onclick="deleteCurrentCustomer()" class="px-4 py-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-bold text-xs border border-rose-500/30 transition">حذف العميل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden bg-slate-900 text-sky-300 border border-sky-500/40 text-xs font-extrabold px-4 py-2.5 rounded-full shadow-xl transition-all"></div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    const DB_URL = 'https://repairshop-e2483-default-rtdb.firebaseio.com/central_elganbehy';
+    const SHOP_NAME = 'سنترال محمد الجنبيهي';
+    const SHOP_PHONE = '01008887741';
+    const STORAGE_KEY = 'central_elganbehy_repairs_dark_v2';
+
+    let appState = {
+      customers: {},
+      devices: {},
+      tasks: {},
+      shortages: {}
+    };
+
+    let currentMainTab = 'customers';
+    let currentCustomerId = null;
+    let customerFilter = 'all';
+    let privacyMode = false;
+
+    const STATUS_META = {
+      checking:  { label: 'قيد الفحص',     badge: 'bg-amber-500/15 text-amber-300 border-amber-500/35' },
+      repairing: { label: 'قيد الصيانة',   badge: 'bg-sky-500/15 text-sky-300 border-sky-500/35' },
+      ready:     { label: 'جاهز للتسليم',  badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35' },
+      delivered: { label: 'تم التسليم',    badge: 'bg-slate-700/50 text-slate-200 border-slate-600' },
+      rejected:  { label: 'مرفوض / مرتجع', badge: 'bg-rose-500/15 text-rose-300 border-rose-500/35' }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFromLocalCache();
+      renderAll();
+      syncFromFirebase();
+      setInterval(syncFromFirebase, 12000);
+    });
+
+    function loadFromLocalCache() {
+      try {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          appState.customers = parsed.customers || {};
+          appState.devices = parsed.devices || {};
+          appState.tasks = parsed.tasks || {};
+          appState.shortages = parsed.shortages || {};
+        }
+      } catch (e) {}
+    }
+
+    function saveToLocalCache() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {}
+    }
+
+    async function syncFromFirebase() {
+      try {
+        const res = await fetch(`${DB_URL}.json`);
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            showDbAlert('قواعد الأمان في Firebase مقفولة', 'يرجى تفعيل صلاحية القراءة والكتابة (Rules: .read: true, .write: true) في لوحة تحكم Firebase للمزامنة السحابية. البيانات محفوظة حالياً على جهازك.');
+          }
+          return;
+        }
+        const data = await res.json();
+        if (data && typeof data === 'object') {
+          appState.customers = data.customers || {};
+          appState.devices = data.devices || {};
+          appState.tasks = data.tasks || {};
+          appState.shortages = data.shortages || {};
+          saveToLocalCache();
+          renderAll();
+        }
+      } catch (err) {}
+    }
+
+    async function pushPathToFirebase(subPath, payload) {
+      saveToLocalCache();
+      try {
+        await fetch(`${DB_URL}/${subPath}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {}
+    }
+
+    async function deletePathFromFirebase(subPath) {
+      saveToLocalCache();
+      try {
+        await fetch(`${DB_URL}/${subPath}.json`, { method: 'DELETE' });
+      } catch (e) {}
+    }
+
+    function showDbAlert(title, desc) {
+      document.getElementById('db-alert-title').textContent = title;
+      document.getElementById('db-alert-desc').textContent = desc;
+      document.getElementById('db-alert-banner').classList.remove('hidden');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+
+    function generateId(prefix) {
+      return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    }
+
+    function formatCurrency(num) {
+      if (privacyMode) return '****';
+      return `${Number(num || 0).toLocaleString('en-US')} ج.م`;
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      return new Date(ts).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
+    }
+
+    function getDevicePaymentsArray(dev) {
+      if (!dev || !dev.payments) return [];
+      if (Array.isArray(dev.payments)) return dev.payments.filter(Boolean);
+      return Object.values(dev.payments).filter(Boolean);
+    }
+
+    function getDevicePaidAmount(dev) {
+      return getDevicePaymentsArray(dev).reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    }
+
+    // Financial status ONLY applies when customer has at least one device with status === 'delivered'
+    function getCustomerFinancialSummary(customerId) {
+      const custDevices = Object.values(appState.devices).filter(d => d.customerId === customerId);
+      const deliveredDevices = custDevices.filter(d => d.status === 'delivered');
+
+      if (deliveredDevices.length === 0) {
+        return { hasDelivered: false, totalDeliveredPrice: 0, totalDeliveredPaid: 0, remainingDebt: 0 };
+      }
+
+      let totalDeliveredPrice = 0;
+      let totalDeliveredPaid = 0;
+      deliveredDevices.forEach(dev => {
+        totalDeliveredPrice += Number(dev.price || 0);
+        totalDeliveredPaid += getDevicePaidAmount(dev);
+      });
+
+      return {
+        hasDelivered: true,
+        totalDeliveredPrice,
+        totalDeliveredPaid,
+        remainingDebt: Math.max(0, totalDeliveredPrice - totalDeliveredPaid)
+      };
+    }
+
+    function formatPhoneForWhatsApp(phone) {
+      let clean = String(phone || '').replace(/\D/g, '');
+      if (clean.startsWith('01') && clean.length === 11) {
+        clean = '2' + clean;
+      }
+      return clean;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ==================== NAVIGATION ====================
+    function switchMainTab(tab) {
+      currentMainTab = tab;
+      currentCustomerId = null;
+
+      document.getElementById('btn-back-customers').classList.add('hidden');
+      document.getElementById('btn-back-customers').classList.remove('flex');
+      document.getElementById('header-title').textContent = SHOP_NAME;
+      document.getElementById('header-subtitle').textContent = `إدارة الصيانة والعملاء • ${SHOP_PHONE}`;
+
+      document.getElementById('view-customers').classList.toggle('hidden', tab !== 'customers');
+      document.getElementById('view-customer-profile').classList.add('hidden');
+      document.getElementById('view-tasks').classList.toggle('hidden', tab !== 'tasks');
+      document.getElementById('view-profits').classList.toggle('hidden', tab !== 'profits');
+
+      ['customers', 'tasks', 'profits'].forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (t === tab) {
+          btn.classList.remove('text-slate-500', 'font-bold');
+          btn.classList.add('text-sky-400', 'font-extrabold');
+        } else {
+          btn.classList.remove('text-sky-400', 'font-extrabold');
+          btn.classList.add('text-slate-500', 'font-bold');
+        }
+      });
+
+      renderAll();
+    }
+
+    function openCustomerProfile(customerId) {
+      const cust = appState.customers[customerId];
+      if (!cust) return;
+
+      currentCustomerId = customerId;
+      const backBtn = document.getElementById('btn-back-customers');
+      backBtn.classList.remove('hidden');
+      backBtn.classList.add('flex');
+      document.getElementById('header-title').textContent = cust.name;
+      document.getElementById('header-subtitle').textContent = 'ملف العميل والأجهزة المسجلة';
+
+      document.getElementById('view-customers').classList.add('hidden');
+      document.getElementById('view-tasks').classList.add('hidden');
+      document.getElementById('view-profits').classList.add('hidden');
+      document.getElementById('view-customer-profile').classList.remove('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderCustomerProfile();
+    }
+
+    function closeCustomerProfile() {
+      switchMainTab('customers');
+    }
+
+    function switchTasksSubtab(sub) {
+      const isTasks = sub === 'tasks';
+      document.getElementById('panel-daily-tasks').classList.toggle('hidden', !isTasks);
+      document.getElementById('panel-shortages').classList.toggle('hidden', isTasks);
+
+      const btnT = document.getElementById('subtab-btn-tasks');
+      const btnS = document.getElementById('subtab-btn-shortages');
+
+      if (isTasks) {
+        btnT.className = 'py-2 rounded-xl text-xs font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/35 transition';
+        btnS.className = 'py-2 rounded-xl text-xs font-extrabold bg-transparent text-slate-400 hover:text-slate-200 transition';
+      } else {
+        btnS.className = 'py-2 rounded-xl text-xs font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/35 transition';
+        btnT.className = 'py-2 rounded-xl text-xs font-extrabold bg-transparent text-slate-400 hover:text-slate-200 transition';
+      }
+    }
+
+    // ==================== RENDER ====================
+    function renderAll() {
+      updateTopStats();
+      updateCustomersDatalist();
+      if (currentCustomerId && appState.customers[currentCustomerId]) {
+        renderCustomerProfile();
+      } else {
+        renderCustomersList();
+      }
+      renderTasksAndShortages();
+      renderProfitsSummary();
+    }
+
+    function updateTopStats() {
+      const devicesArr = Object.values(appState.devices);
+
+      document.getElementById('stat-repairing-devices').textContent = devicesArr.filter(d => d.status === 'repairing').length;
+      document.getElementById('stat-checking-devices').textContent = devicesArr.filter(d => d.status === 'checking').length;
+      document.getElementById('stat-ready-devices').textContent = devicesArr.filter(d => d.status === 'ready').length;
+
+      const pendingTasks = Object.values(appState.tasks).filter(t => !t.done).length;
+      const shortagesCount = Object.values(appState.shortages).length;
+      const totalAlerts = pendingTasks + shortagesCount;
+      const navBadge = document.getElementById('nav-tasks-badge');
+      if (totalAlerts > 0) {
+        navBadge.textContent = totalAlerts;
+        navBadge.classList.remove('hidden');
+      } else {
+        navBadge.classList.add('hidden');
+      }
+    }
+
+    function updateCustomersDatalist() {
+      document.getElementById('customers-datalist').innerHTML = Object.values(appState.customers)
+        .map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.phone)}</option>`)
+        .join('');
+    }
+
+    function setStatusFilter(statusVal) {
+      document.getElementById('device-status-filter').value = statusVal;
+      renderCustomersList();
+    }
+
+    function setCustomerFilter(filter) {
+      customerFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+          btn.className = 'filter-pill px-3 py-1 rounded-lg text-[11px] font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/40 whitespace-nowrap transition';
+        } else {
+          btn.className = 'filter-pill px-3 py-1 rounded-lg text-[11px] font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 whitespace-nowrap transition';
+        }
+      });
+      renderCustomersList();
+    }
+
+    function clearSearch() {
+      document.getElementById('customer-search-input').value = '';
+      renderCustomersList();
+    }
+
+    function renderCustomersList() {
+      const container = document.getElementById('customers-list-container');
+      const query = (document.getElementById('customer-search-input').value || '').trim().toLowerCase();
+      const selectedStatus = document.getElementById('device-status-filter').value;
+      document.getElementById('btn-clear-search').classList.toggle('hidden', !query);
+
+      let enriched = Object.values(appState.customers).map(cust => {
+        const custDevices = Object.values(appState.devices)
+          .filter(d => d.customerId === cust.id)
+          .sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+
+        const fin = getCustomerFinancialSummary(cust.id);
+        const latestActivity = custDevices.length > 0
+          ? Math.max(...custDevices.map(d => d.updatedAt || d.createdAt || 0))
+          : (cust.updatedAt || cust.createdAt || 0);
+
+        return { cust, custDevices, fin, latestActivity };
+      });
+
+      if (query) {
+        enriched = enriched.filter(({ cust, custDevices }) => {
+          const matchCust = (cust.name || '').toLowerCase().includes(query) || (cust.phone || '').includes(query);
+          const matchDev = custDevices.some(d =>
+            (d.model || '').toLowerCase().includes(query) ||
+            (d.issue || '').toLowerCase().includes(query) ||
+            (d.imei || '').toLowerCase().includes(query)
+          );
+          return matchCust || matchDev;
+        });
+      }
+
+      // Filter by device status dropdown
+      if (selectedStatus && selectedStatus !== 'all') {
+        enriched = enriched.filter(item => item.custDevices.some(d => d.status === selectedStatus));
+      }
+
+      if (customerFilter === 'active') {
+        enriched = enriched.filter(item => item.custDevices.some(d => d.status === 'checking' || d.status === 'repairing'));
+      } else if (customerFilter === 'ready') {
+        enriched = enriched.filter(item => item.custDevices.some(d => d.status === 'ready'));
+      } else if (customerFilter === 'debt') {
+        enriched = enriched.filter(item => item.fin.hasDelivered && item.fin.remainingDebt > 0);
+      }
+
+      enriched.sort((a, b) => b.latestActivity - a.latestActivity);
+
+      if (enriched.length === 0) {
+        container.innerHTML = `
+          <div class="bg-[#0d1324] rounded-2xl p-8 border border-slate-800/90 text-center space-y-2">
+            <p class="text-sm font-extrabold text-slate-200">لا يوجد عملاء مطابقون</p>
+            <p class="text-xs text-slate-500">جرّب تغيير فلتر الحالة أو اضغط "استلام جهاز" لإضافة عميل جديد</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = enriched.map(({ cust, custDevices, fin }) => {
+        // Show the device matching selected status if a status filter is active, otherwise latest device
+        const displayDev = (selectedStatus && selectedStatus !== 'all')
+          ? (custDevices.find(d => d.status === selectedStatus) || custDevices[0])
+          : custDevices[0];
+
+        const statusInfo = displayDev ? (STATUS_META[displayDev.status] || STATUS_META.checking) : null;
+
+        // Only shown when at least one device is 'delivered'
+        let financeBadgeHtml = '';
+        if (fin.hasDelivered) {
+          financeBadgeHtml = fin.remainingDebt > 0
+            ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-rose-500/15 text-rose-300 border border-rose-500/35">عليه: ${fin.remainingDebt} ج.م</span>`
+            : `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">خالص</span>`;
+        }
+
+        const initialChar = (cust.name || 'ع').trim().charAt(0);
+
+        return `
+          <div onclick="openCustomerProfile('${cust.id}')" class="bg-[#0d1324] hover:bg-[#121a30] rounded-2xl p-3.5 border border-slate-800/90 hover:border-sky-500/40 neon-card-glow transition cursor-pointer active:scale-[0.99]">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 rounded-2xl bg-sky-500/10 text-sky-400 border border-sky-500/25 font-black text-base flex items-center justify-center shrink-0">
+                  ${escapeHtml(initialChar)}
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-sm font-black neon-customer-name truncate">${escapeHtml(cust.name)}</h3>
+                    ${financeBadgeHtml}
+                  </div>
+                  <p class="text-xs font-medium text-slate-400 mt-0.5">${escapeHtml(cust.phone)} • <span class="text-slate-200 font-bold">${custDevices.length} ${custDevices.length === 1 ? 'جهاز' : 'أجهزة'}</span></p>
+                </div>
+              </div>
+
+              <svg class="w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            </div>
+
+            ${displayDev ? `
+              <div class="mt-2.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs">
+                <div class="truncate text-slate-400">
+                  <span class="font-bold text-slate-200">${escapeHtml(displayDev.model)}</span>
+                  <span class="text-slate-600 mx-1">-</span>
+                  <span>${escapeHtml(displayDev.issue)}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold border shrink-0 ${statusInfo.badge}">
+                  ${statusInfo.label}
+                </span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCustomerProfile() {
+      const cust = appState.customers[currentCustomerId];
+      if (!cust) return;
+
+      document.getElementById('header-title').textContent = cust.name;
+      document.getElementById('profile-name').textContent = cust.name;
+      document.getElementById('profile-phone').textContent = cust.phone;
+      document.getElementById('profile-avatar').textContent = (cust.name || 'ع').trim().charAt(0);
+      document.getElementById('profile-call-btn').href = `tel:${cust.phone}`;
+
+      const fin = getCustomerFinancialSummary(cust.id);
+      const badgeContainer = document.getElementById('profile-finance-badge-container');
+      if (fin.hasDelivered) {
+        badgeContainer.innerHTML = fin.remainingDebt > 0
+          ? `<div class="bg-rose-500/15 border border-rose-500/35 rounded-xl px-3 py-1.5 text-center">
+               <span class="text-[10px] font-bold text-rose-400 block">متبقي عليه</span>
+               <span class="text-sm font-black text-rose-300">${fin.remainingDebt} ج.م</span>
+             </div>`
+          : `<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">خالص ✓</span>`;
+      } else {
+        badgeContainer.innerHTML = '';
+      }
+
+      const custDevices = Object.values(appState.devices)
+        .filter(d => d.customerId === cust.id)
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      document.getElementById('profile-devices-count').textContent = custDevices.length;
+
+      const devicesContainer = document.getElementById('profile-devices-container');
+      if (custDevices.length === 0) {
+        devicesContainer.innerHTML = `<div class="bg-[#0d1324] rounded-2xl p-6 border border-slate-800/90 text-center text-xs text-slate-400">لا توجد أجهزة مسجلة لهذا العميل بعد.</div>`;
+        return;
+      }
+
+      devicesContainer.innerHTML = custDevices.map(dev => {
+        const st = STATUS_META[dev.status] || STATUS_META.checking;
+        const price = Number(dev.price || 0);
+        const paid = getDevicePaidAmount(dev);
+        const remaining = Math.max(0, price - paid);
+        const payments = getDevicePaymentsArray(dev);
+
+        return `
+          <div class="bg-[#0d1324] rounded-2xl p-4 border border-slate-800/90 neon-card-glow space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="text-base font-extrabold text-white">${escapeHtml(dev.model)}</h4>
+                  <span class="text-[11px] font-medium text-slate-500">${formatDate(dev.createdAt)}</span>
+                </div>
+                <p class="text-xs font-bold text-sky-400 mt-0.5">${escapeHtml(dev.issue)}</p>
+              </div>
+
+              <select onchange="changeDeviceStatus('${dev.id}', this.value)" class="bg-[#060913] text-xs font-extrabold rounded-xl px-2.5 py-1.5 border cursor-pointer focus:outline-none ${st.badge}">
+                <option value="checking"  ${dev.status === 'checking'  ? 'selected' : ''}>قيد الفحص</option>
+                <option value="repairing" ${dev.status === 'repairing' ? 'selected' : ''}>قيد الصيانة</option>
+                <option value="ready"     ${dev.status === 'ready'     ? 'selected' : ''}>جاهز للتسليم</option>
+                <option value="delivered" ${dev.status === 'delivered' ? 'selected' : ''}>تم التسليم</option>
+                <option value="rejected"  ${dev.status === 'rejected'  ? 'selected' : ''}>مرفوض / مرتجع</option>
+              </select>
+            </div>
+
+            ${(dev.imei || dev.accessories || dev.notes) ? `
+              <div class="bg-[#060913] rounded-xl p-2.5 text-[11px] text-slate-400 space-y-1 border border-slate-800/80">
+                ${dev.imei ? `<div><span class="font-bold text-slate-300">السيريال/IMEI:</span> ${escapeHtml(dev.imei)}</div>` : ''}
+                ${dev.accessories ? `<div><span class="font-bold text-slate-300">الملحقات:</span> ${escapeHtml(dev.accessories)}</div>` : ''}
+                ${dev.notes ? `<div><span class="font-bold text-slate-300">ملاحظات:</span> ${escapeHtml(dev.notes)}</div>` : ''}
+              </div>
+            ` : ''}
+
+            <div class="grid grid-cols-3 gap-2 bg-[#060913] p-2.5 rounded-xl border border-slate-800/80 text-center">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block">التكلفة</span>
+                <span class="text-xs font-black text-white">${price} ج.م</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block">المدفوع</span>
+                <span class="text-xs font-black text-emerald-400">${paid} ج.م</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block">المتبقي</span>
+                <span class="text-xs font-black ${remaining > 0 ? 'text-sky-400' : 'text-slate-400'}">${remaining} ج.م</span>
+              </div>
+            </div>
+
+            ${payments.length > 0 ? `
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-slate-400 block">سجل الدفعات:</span>
+                <div class="space-y-1 max-h-28 overflow-y-auto">
+                  ${payments.map(p => `
+                    <div class="flex items-center justify-between text-[11px] bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+                      <span class="font-bold text-emerald-300">+${p.amount} ج.م <span class="font-normal text-slate-400">${p.note ? `(${escapeHtml(p.note)})` : ''}</span></span>
+                      <span class="text-slate-500">${formatDate(p.date)}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="flex items-center gap-2 pt-1">
+              <button onclick="openPaymentModal('${dev.id}')" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition">
+                + تسجيل دفعة
+              </button>
+              <button onclick="sendSingleDeviceWhatsApp('${dev.id}')" class="py-2 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1 transition">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
+                <span>واتساب</span>
+              </button>
+              <button onclick="openEditDeviceModal('${dev.id}')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition" title="تعديل الجهاز">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </button>
+              <button onclick="deleteDevice('${dev.id}')" class="p-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 transition" title="حذف الجهاز">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==================== MODALS & CRUD ====================
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function onCustomerNameInput(val) {
+      const trimmed = val.trim();
+      const matched = Object.values(appState.customers).find(c => c.name.trim() === trimmed);
+      const hint = document.getElementById('dev-existing-customer-hint');
+      if (matched) {
+        document.getElementById('dev-customer-id').value = matched.id;
+        document.getElementById('dev-cust-phone').value = matched.phone;
+        hint.classList.remove('hidden');
+      } else {
+        if (!currentCustomerId) document.getElementById('dev-customer-id').value = '';
+        hint.classList.add('hidden');
+      }
+    }
+
+    function openNewDeviceModal() {
+      document.getElementById('form-device').reset();
+      document.getElementById('dev-id').value = '';
+      document.getElementById('dev-initial-paid-wrapper').classList.remove('hidden');
+      document.getElementById('dev-existing-customer-hint').classList.add('hidden');
+
+      if (currentCustomerId && appState.customers[currentCustomerId]) {
+        const cust = appState.customers[currentCustomerId];
+        document.getElementById('modal-device-title').textContent = `إضافة جهاز لـ ${cust.name}`;
+        document.getElementById('dev-customer-id').value = cust.id;
+        document.getElementById('dev-cust-name').value = cust.name;
+        document.getElementById('dev-cust-phone').value = cust.phone;
+        document.getElementById('dev-existing-customer-hint').classList.remove('hidden');
+      } else {
+        document.getElementById('modal-device-title').textContent = 'استلام جهاز صيانة جديد';
+        document.getElementById('dev-customer-id').value = '';
+      }
+      openModal('modal-device');
+    }
+
+    function openNewDeviceModalForCurrentCustomer() { openNewDeviceModal(); }
+
+    function openEditDeviceModal(devId) {
+      const dev = appState.devices[devId];
+      if (!dev) return;
+      const cust = appState.customers[dev.customerId] || { name: '', phone: '' };
+
+      document.getElementById('modal-device-title').textContent = 'تعديل بيانات الجهاز';
+      document.getElementById('dev-id').value = dev.id;
+      document.getElementById('dev-customer-id').value = dev.customerId;
+      document.getElementById('dev-cust-name').value = cust.name;
+      document.getElementById('dev-cust-phone').value = cust.phone;
+      document.getElementById('dev-model').value = dev.model || '';
+      document.getElementById('dev-status').value = dev.status || 'checking';
+      document.getElementById('dev-issue').value = dev.issue || '';
+      document.getElementById('dev-imei').value = dev.imei || '';
+      document.getElementById('dev-accessories').value = dev.accessories || '';
+      document.getElementById('dev-price').value = dev.price || 0;
+      document.getElementById('dev-cost').value = dev.cost || 0;
+      document.getElementById('dev-notes').value = dev.notes || '';
+      document.getElementById('dev-initial-paid-wrapper').classList.add('hidden');
+      openModal('modal-device');
+    }
+
+    function saveDeviceForm(e) {
+      e.preventDefault();
+      const existingDevId = document.getElementById('dev-id').value;
+      let custId = document.getElementById('dev-customer-id').value;
+      const custName = document.getElementById('dev-cust-name').value.trim();
+      const custPhone = document.getElementById('dev-cust-phone').value.trim();
+
+      const model = document.getElementById('dev-model').value.trim();
+      const status = document.getElementById('dev-status').value;
+      const issue = document.getElementById('dev-issue').value.trim();
+      const imei = document.getElementById('dev-imei').value.trim();
+      const accessories = document.getElementById('dev-accessories').value.trim();
+      const price = Number(document.getElementById('dev-price').value || 0);
+      const cost = Number(document.getElementById('dev-cost').value || 0);
+      const initialPaid = Number(document.getElementById('dev-initial-paid').value || 0);
+      const notes = document.getElementById('dev-notes').value.trim();
+      const now = Date.now();
+
+      if (!custId) {
+        const found = Object.values(appState.customers).find(
+          c => (c.phone && c.phone === custPhone) || (c.name.trim() === custName)
+        );
+        custId = found ? found.id : generateId('cust');
+      }
+
+      const prevCust = appState.customers[custId] || {};
+      const customerObj = {
+        id: custId,
+        name: custName,
+        phone: custPhone,
+        createdAt: prevCust.createdAt || now,
+        updatedAt: now
+      };
+      appState.customers[custId] = customerObj;
+      pushPathToFirebase(`customers/${custId}`, customerObj);
+
+      if (existingDevId && appState.devices[existingDevId]) {
+        const oldDev = appState.devices[existingDevId];
+        const updatedDev = { ...oldDev, customerId: custId, model, status, issue, imei, accessories, price, cost, notes, updatedAt: now };
+        appState.devices[existingDevId] = updatedDev;
+        pushPathToFirebase(`devices/${existingDevId}`, updatedDev);
+        showToast('تم تحديث بيانات الجهاز');
+      } else {
+        const newDevId = generateId('dev');
+        const initialPayments = initialPaid > 0 ? [{ id: generateId('pay'), amount: initialPaid, note: 'دفعة مقدمة عند الاستلام', date: now }] : [];
+        const newDev = {
+          id: newDevId,
+          customerId: custId,
+          model,
+          status,
+          issue,
+          imei,
+          accessories,
+          price,
+          cost,
+          payments: initialPayments,
+          notes,
+          createdAt: now,
+          updatedAt: now
+        };
+        appState.devices[newDevId] = newDev;
+        pushPathToFirebase(`devices/${newDevId}`, newDev);
+        showToast('تم تسجيل الجهاز بنجاح');
+      }
+
+      closeModal('modal-device');
+      renderAll();
+    }
+
+    function changeDeviceStatus(devId, newStatus) {
+      const dev = appState.devices[devId];
+      if (!dev) return;
+      dev.status = newStatus;
+      dev.updatedAt = Date.now();
+      appState.devices[devId] = dev;
+      pushPathToFirebase(`devices/${devId}`, dev);
+      renderAll();
+      showToast(`تم تغيير الحالة إلى: ${STATUS_META[newStatus].label}`);
+    }
+
+    function deleteDevice(devId) {
+      if (!confirm('هل أنت متأكد من حذف هذا الجهاز نهائياً؟')) return;
+      delete appState.devices[devId];
+      deletePathFromFirebase(`devices/${devId}`);
+      renderAll();
+      showToast('تم حذف الجهاز');
+    }
+
+    // ==================== PAYMENTS (STATUS NEVER CHANGES) ====================
+    function openPaymentModal(devId) {
+      const dev = appState.devices[devId];
+      if (!dev) return;
+      const price = Number(dev.price || 0);
+      const paid = getDevicePaidAmount(dev);
+      const rem = Math.max(0, price - paid);
+
+      document.getElementById('pay-device-id').value = devId;
+      document.getElementById('pay-modal-device-label').textContent = `${dev.model} - ${dev.issue}`;
+      document.getElementById('pay-summary-total').textContent = `${price} ج.م`;
+      document.getElementById('pay-summary-paid').textContent = `${paid} ج.م`;
+      document.getElementById('pay-summary-rem').textContent = `${rem} ج.م`;
+      document.getElementById('pay-amount-input').value = rem > 0 ? rem : '';
+      document.getElementById('pay-note-input').value = '';
+      openModal('modal-payment');
+    }
+
+    function fillRemainingPayment() {
+      const dev = appState.devices[document.getElementById('pay-device-id').value];
+      if (!dev) return;
+      document.getElementById('pay-amount-input').value = Math.max(0, Number(dev.price || 0) - getDevicePaidAmount(dev));
+    }
+
+    function submitPayment(e) {
+      e.preventDefault();
+      const devId = document.getElementById('pay-device-id').value;
+      const dev = appState.devices[devId];
+      if (!dev) return;
+
+      const amount = Number(document.getElementById('pay-amount-input').value || 0);
+      const note = document.getElementById('pay-note-input').value.trim();
+      if (amount <= 0) return;
+
+      const currentPayments = getDevicePaymentsArray(dev);
+      currentPayments.push({ id: generateId('pay'), amount, note, date: Date.now() });
+
+      // Preserve dev.status without altering it
+      const updatedDevice = { ...dev, payments: currentPayments, updatedAt: Date.now() };
+      appState.devices[devId] = updatedDevice;
+      pushPathToFirebase(`devices/${devId}`, updatedDevice);
+
+      closeModal('modal-payment');
+      renderAll();
+      showToast(`تم تسجيل دفعة ${amount} ج.م`);
+    }
+
+    // ==================== EDIT / DELETE CUSTOMER ====================
+    function openEditCustomerModal() {
+      const cust = appState.customers[currentCustomerId];
+      if (!cust) return;
+      document.getElementById('edit-cust-name').value = cust.name;
+      document.getElementById('edit-cust-phone').value = cust.phone;
+      openModal('modal-edit-customer');
+    }
+
+    function saveCustomerEdit(e) {
+      e.preventDefault();
+      const cust = appState.customers[currentCustomerId];
+      if (!cust) return;
+      cust.name = document.getElementById('edit-cust-name').value.trim();
+      cust.phone = document.getElementById('edit-cust-phone').value.trim();
+      cust.updatedAt = Date.now();
+      appState.customers[currentCustomerId] = cust;
+      pushPathToFirebase(`customers/${currentCustomerId}`, cust);
+      closeModal('modal-edit-customer');
+      renderAll();
+      showToast('تم تحديث بيانات العميل');
+    }
+
+    function deleteCurrentCustomer() {
+      if (!currentCustomerId || !confirm('سيتم حذف العميل وجميع أجهزته المسجلة. هل أنت متأكد؟')) return;
+      Object.values(appState.devices).forEach(d => {
+        if (d.customerId === currentCustomerId) {
+          delete appState.devices[d.id];
+          deletePathFromFirebase(`devices/${d.id}`);
+        }
+      });
+      delete appState.customers[currentCustomerId];
+      deletePathFromFirebase(`customers/${currentCustomerId}`);
+      closeModal('modal-edit-customer');
+      closeCustomerProfile();
+      showToast('تم حذف العميل');
+    }
+
+    // ==================== WHATSAPP ====================
+    function openWhatsAppUrl(phone, message) {
+      const formatted = formatPhoneForWhatsApp(phone);
+      const url = formatted
+        ? `https://wa.me/${formatted}?text=${encodeURIComponent(message)}`
+        : `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    function sendCustomerWhatsAppGreeting() {
+      const cust = appState.customers[currentCustomerId];
+      if (!cust) return;
+      openWhatsAppUrl(cust.phone, `أهلاً بك أ/ ${cust.name} معك *${SHOP_NAME}* (${SHOP_PHONE}).`);
+    }
+
+    function sendSingleDeviceWhatsApp(devId) {
+      const dev = appState.devices[devId];
+      if (!dev) return;
+      const cust = appState.customers[dev.customerId];
+      if (!cust) return;
+      const stLabel = (STATUS_META[dev.status] || STATUS_META.checking).label;
+      const price = Number(dev.price || 0);
+      const paid = getDevicePaidAmount(dev);
+      const rem = Math.max(0, price - paid);
+
+      let msg = `*${SHOP_NAME}*\nمرحباً أ/ ${cust.name}\n📱 الجهاز: *${dev.model}*\n🔧 العطل: ${dev.issue}\n📌 الحالة الحالية: *${stLabel}*\n`;
+      if (price > 0) msg += `💰 التكلفة: ${price} ج.م | المدفوع: ${paid} ج.م | المتبقي: ${rem} ج.م\n`;
+      msg += `\nللاستفسار: ${SHOP_PHONE}`;
+      openWhatsAppUrl(cust.phone, msg);
+    }
+
+    function sendCustomerStatementWhatsApp() {
+      const cust = appState.customers[currentCustomerId];
+      if (!cust) return;
+      const custDevices = Object.values(appState.devices).filter(d => d.customerId === cust.id);
+      let msg = `*كشف أجهزة الصيانة - ${SHOP_NAME}*\nالعميل: *${cust.name}*\n------------------\n`;
+      custDevices.forEach((d, idx) => {
+        const stLabel = (STATUS_META[d.status] || STATUS_META.checking).label;
+        const price = Number(d.price || 0);
+        const rem = Math.max(0, price - getDevicePaidAmount(d));
+        msg += `${idx + 1}. *${d.model}* (${d.issue})\n   الحالة: ${stLabel} | التكلفة: ${price} ج.م | المتبقي: ${rem} ج.م\n`;
+      });
+      const fin = getCustomerFinancialSummary(cust.id);
+      if (fin.hasDelivered) {
+        msg += `------------------\n` + (fin.remainingDebt > 0 ? `إجمالي المستحق للأجهزة المُسلّمة: *${fin.remainingDebt} ج.م*\n` : `الحساب للأجهزة المُسلّمة: *خالص*\n`);
+      }
+      msg += `\nللتواصل: ${SHOP_PHONE}`;
+      openWhatsAppUrl(cust.phone, msg);
+    }
+
+    // ==================== TASKS & SHORTAGES ====================
+    function addTask(e) {
+      e.preventDefault();
+      const input = document.getElementById('new-task-input');
+      const title = input.value.trim();
+      if (!title) return;
+      const id = generateId('task');
+      const taskObj = { id, title, done: false, createdAt: Date.now() };
+      appState.tasks[id] = taskObj;
+      pushPathToFirebase(`tasks/${id}`, taskObj);
+      input.value = '';
+      renderAll();
+    }
+
+    function toggleTask(id) {
+      const t = appState.tasks[id];
+      if (!t) return;
+      t.done = !t.done;
+      appState.tasks[id] = t;
+      pushPathToFirebase(`tasks/${id}`, t);
+      renderAll();
+    }
+
+    function deleteTask(id) {
+      delete appState.tasks[id];
+      deletePathFromFirebase(`tasks/${id}`);
+      renderAll();
+    }
+
+    function addShortage(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('shortage-name-input');
+      const qtyInput = document.getElementById('shortage-qty-input');
+      const name = nameInput.value.trim();
+      const qty = Number(qtyInput.value || 1);
+      if (!name) return;
+      const id = generateId('short');
+      const item = { id, name, qty, createdAt: Date.now() };
+      appState.shortages[id] = item;
+      pushPathToFirebase(`shortages/${id}`, item);
+      nameInput.value = '';
+      qtyInput.value = 1;
+      renderAll();
+      showToast('تمت الإضافة للنواقص');
+    }
+
+    function deleteShortage(id) {
+      delete appState.shortages[id];
+      deletePathFromFirebase(`shortages/${id}`);
+      renderAll();
+    }
+
+    function sendShortagesToSupplierWhatsApp() {
+      const items = Object.values(appState.shortages);
+      if (items.length === 0) {
+        showToast('قائمة النواقص فارغة');
+        return;
+      }
+      let msg = `*طلبية نواقص قطع غيار - ${SHOP_NAME}*\n------------------\n`;
+      items.forEach((item, i) => { msg += `${i + 1}- ${item.name} (العدد: ${item.qty})\n`; });
+      msg += `------------------\nالتواصل: ${SHOP_PHONE}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function renderTasksAndShortages() {
+      const tasksArr = Object.values(appState.tasks).sort((a, b) => Number(a.done) - Number(b.done) || (b.createdAt || 0) - (a.createdAt || 0));
+      document.getElementById('count-pending-tasks').textContent = tasksArr.filter(t => !t.done).length;
+
+      const tasksContainer = document.getElementById('tasks-list-container');
+      tasksContainer.innerHTML = tasksArr.length === 0
+        ? `<div class="bg-[#0d1324] rounded-2xl p-6 border border-slate-800/90 text-center text-xs text-slate-500">لا توجد مهام مسجلة حالياً</div>`
+        : tasksArr.map(t => `
+          <div class="bg-[#0d1324] rounded-2xl p-3 border border-slate-800/90 flex items-center justify-between gap-3">
+            <label class="flex items-center gap-3 cursor-pointer flex-1 min-w-0">
+              <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask('${t.id}')" class="w-4 h-4 rounded accent-sky-400" />
+              <span class="text-sm font-bold truncate ${t.done ? 'line-through text-slate-500' : 'text-slate-200'}">${escapeHtml(t.title)}</span>
+            </label>
+            <button onclick="deleteTask('${t.id}')" class="text-slate-500 hover:text-rose-400 p-1 text-xs font-bold">✕</button>
+          </div>
+        `).join('');
+
+      const shortagesArr = Object.values(appState.shortages).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      document.getElementById('count-shortages').textContent = shortagesArr.length;
+
+      const shortagesContainer = document.getElementById('shortages-list-container');
+      shortagesContainer.innerHTML = shortagesArr.length === 0
+        ? `<div class="bg-[#0d1324] rounded-2xl p-6 border border-slate-800/90 text-center text-xs text-slate-500">لا توجد نواقص قطع غيار مسجلة</div>`
+        : shortagesArr.map(s => `
+          <div class="bg-[#0d1324] rounded-2xl p-3 border border-slate-800/90 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-black shrink-0">×${s.qty}</span>
+              <span class="text-sm font-bold text-slate-200 truncate">${escapeHtml(s.name)}</span>
+            </div>
+            <button onclick="deleteShortage('${s.id}')" class="text-slate-500 hover:text-rose-400 p-1 text-xs font-bold">✕</button>
+          </div>
+        `).join('');
+    }
+
+    // ==================== PROFITS ====================
+    function togglePrivacyMode() {
+      privacyMode = !privacyMode;
+      document.getElementById('privacy-btn-label').textContent = privacyMode ? 'إظهار الأرقام' : 'إخفاء الأرقام';
+      renderProfitsSummary();
+    }
+
+    function renderProfitsSummary() {
+      const devicesArr = Object.values(appState.devices);
+      const deliveredDevices = devicesArr.filter(d => d.status === 'delivered');
+
+      let netDeliveredProfit = 0;
+      let totalDeliveredDebts = 0;
+      let totalPartsCost = 0;
+      let totalCollectedAll = 0;
+
+      devicesArr.forEach(d => { totalCollectedAll += getDevicePaidAmount(d); });
+      deliveredDevices.forEach(d => {
+        const price = Number(d.price || 0);
+        const cost = Number(d.cost || 0);
+        netDeliveredProfit += (price - cost);
+        totalPartsCost += cost;
+        totalDeliveredDebts += Math.max(0, price - getDevicePaidAmount(d));
+      });
+
+      document.getElementById('profit-net-delivered').textContent = formatCurrency(netDeliveredProfit);
+      document.getElementById('profit-total-collected').textContent = formatCurrency(totalCollectedAll);
+      document.getElementById('profit-delivered-debts').textContent = formatCurrency(totalDeliveredDebts);
+      document.getElementById('profit-parts-cost').textContent = formatCurrency(totalPartsCost);
+
+      const historyContainer = document.getElementById('delivered-history-list');
+      const sortedDelivered = [...deliveredDevices].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+      if (sortedDelivered.length === 0) {
+        historyContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">لا توجد أجهزة حالتها "تم التسليم" حتى الآن</p>`;
+        return;
+      }
+
+      historyContainer.innerHTML = sortedDelivered.map(d => {
+        const cust = appState.customers[d.customerId] || { name: 'عميل' };
+        const price = Number(d.price || 0);
+        const cost = Number(d.cost || 0);
+        const rem = Math.max(0, price - getDevicePaidAmount(d));
+        const profit = price - cost;
+
+        return `
+          <div onclick="openCustomerProfile('${d.customerId}')" class="p-3 rounded-xl bg-[#060913] hover:bg-sky-500/5 border border-slate-800/80 flex items-center justify-between gap-2 cursor-pointer transition">
+            <div class="min-w-0">
+              <p class="text-xs font-extrabold truncate"><span class="neon-customer-name">${escapeHtml(cust.name)}</span> • <span class="text-slate-200">${escapeHtml(d.model)}</span></p>
+              <p class="text-[11px] text-slate-400 mt-0.5">التكلفة: ${formatCurrency(price)} | الصافي: <span class="text-emerald-400 font-bold">${formatCurrency(profit)}</span></p>
+            </div>
+            <div class="shrink-0">
+              ${rem > 0
+                ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-rose-500/15 text-rose-300 border border-rose-500/30">عليه: ${formatCurrency(rem)}</span>`
+                : `<span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">خالص</span>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
