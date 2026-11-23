@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>سنترال محمد الجنبيهي - إدارة الصيانة والعملاء</title>
+  <meta name="theme-color" content="#060913" />
+  <meta name="application-name" content="الجنبيهي للصيانة" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="الجنبيهي للصيانة" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -77,9 +85,84 @@
       from { opacity: 0; transform: translateY(14px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+
+    /* Responsive visual refresh — keeps existing app logic intact */
+    :root { color-scheme: dark; }
+    body { background-color:#070b14; background-attachment:fixed; }
+    header { box-shadow:0 8px 28px rgba(0,0,0,.22); }
+    header > div, main, #db-alert-banner > div { max-width:1180px !important; }
+    main { padding-top:clamp(1rem,2vw,1.6rem) !important; }
+    main section { scroll-margin-top:80px; }
+    .neon-card-glow { transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease; }
+    .neon-card-glow:hover { box-shadow:0 14px 34px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05); }
+    input,select,textarea,button { font-family:inherit; }
+    input,select,textarea { min-width:0; }
+    input:focus,select:focus,textarea:focus { box-shadow:0 0 0 3px rgba(56,189,248,.10); }
+    button { touch-action:manipulation; }
+    #customers-list-container { display:grid; grid-template-columns:1fr; gap:.75rem; }
+    #customers-list-container > * { min-width:0; }
+    #profile-devices-container, #tasks-list-container, #shortages-list-container, #delivered-history-list { display:grid; gap:.75rem; }
+    nav > div { max-width:1180px !important; }
+    nav button { min-height:48px; }
+    .modal-enter { box-shadow:0 25px 80px rgba(0,0,0,.55); }
+    @media (min-width:640px) {
+      header > div { height:72px !important; }
+      #customers-list-container { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .safe-bottom { padding-bottom:calc(6.5rem + env(safe-area-inset-bottom)); }
+      #modal-device > div, #modal-payment > div, #modal-edit-customer > div { border-radius:1.5rem !important; }
+      #modal-device, #modal-payment, #modal-edit-customer { padding:1rem !important; }
+    }
+    @media (min-width:1024px) {
+      #customers-list-container { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      main { padding-left:1.5rem !important; padding-right:1.5rem !important; }
+      #view-profits > div:first-child { max-width:900px; margin-inline:auto; }
+    }
+    @media (max-width:380px) {
+      header > div { padding-inline:.65rem !important; }
+      #header-title { font-size:.88rem !important; }
+      #header-subtitle { font-size:9px !important; }
+      header button.neon-btn { padding-inline:.6rem !important; font-size:10px !important; }
+      main { padding-inline:.65rem !important; }
+      .grid.grid-cols-3 { gap:.4rem !important; }
+      #customer-search-input { font-size:11px !important; }
+      #device-status-filter { max-width:100px; font-size:10px !important; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
   </style>
+
+  <style id="elganbihy-premium-refresh">
+    :root { --blue:#39b9ff; --gold:#e7b74a; --deep:#070b14; }
+    body { background-color:#050811 !important; background-image:radial-gradient(ellipse at 90% 0%,rgba(15,83,171,.22),transparent 42%),radial-gradient(ellipse at 10% 90%,rgba(211,155,38,.08),transparent 38%) !important; }
+    header { background:linear-gradient(180deg,rgba(5,9,18,.97),rgba(7,11,20,.92)) !important; border-bottom:1px solid rgba(231,183,74,.22) !important; }
+    header > div { position:relative; }
+    header > div:after { content:""; position:absolute; inset:auto 1rem -1px 1rem; height:1px; background:linear-gradient(90deg,transparent,rgba(57,185,255,.4),rgba(231,183,74,.45),transparent); pointer-events:none; }
+    header .w-9.h-9.rounded-xl.bg-sky-500\/15 { background:linear-gradient(145deg,rgba(231,183,74,.18),rgba(57,185,255,.12)) !important; border-color:rgba(231,183,74,.35) !important; color:#f2c65c !important; box-shadow:0 0 16px rgba(231,183,74,.08); }
+    .neon-customer-name { color:#48bdff !important; text-shadow:0 0 10px rgba(57,185,255,.25) !important; }
+    #customers-list-container > div { background:linear-gradient(145deg,#0d1526,#080d18) !important; border-color:rgba(57,185,255,.16) !important; box-shadow:0 10px 24px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.035) !important; }
+    #customers-list-container > div:hover { border-color:rgba(57,185,255,.4) !important; transform:translateY(-1px); }
+    .neon-btn { background:linear-gradient(135deg,#147ac4,#1763df) !important; border:1px solid rgba(57,185,255,.28); box-shadow:0 6px 20px rgba(20,122,196,.22) !important; }
+    .nav-btn { border-top:1px solid transparent; }
+    .nav-btn.text-sky-400 { border-top-color:rgba(57,185,255,.35) !important; background:linear-gradient(180deg,rgba(57,185,255,.08),transparent) !important; }
+    #app-install-banner { display:none; }
+    #app-install-banner.show { display:flex; }
+    #app-install-banner button { min-height:42px; }
+    #app-splash { position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; flex-direction:column; background:radial-gradient(circle at 50% 45%,#14243c 0,#060a13 62%); transition:opacity .4s ease,visibility .4s; }
+    #app-splash.hide { opacity:0; visibility:hidden; pointer-events:none; }
+    #app-splash .splash-mark { width:94px;height:94px;border-radius:26px;display:grid;place-items:center;border:1px solid rgba(231,183,74,.6);background:linear-gradient(145deg,#151b2b,#050811);box-shadow:0 0 35px rgba(231,183,74,.13);color:#f0c04d;font-size:46px; }
+    #app-splash .splash-title { margin-top:18px;color:#f2c34e;font-size:22px;font-weight:900;letter-spacing:.3px; }
+    #app-splash .splash-sub { color:#9db6d4;font-size:12px;margin-top:4px; }
+    @media (max-width:380px) { #app-install-banner { gap:.5rem !important; padding:.7rem !important; } #app-install-banner p { font-size:10px !important; } }
+    @media (prefers-reduced-motion:reduce) { #app-splash { transition:none; } }
+  </style>
+
 </head>
 <body class="antialiased selection:bg-sky-500/30 selection:text-sky-200">
+  <div id="app-splash" aria-label="جاري فتح الجنبيهي للصيانة">
+    <div class="splash-mark">♛</div>
+    <div class="splash-title">الجنبيهي للصيانة</div>
+    <div class="splash-sub">إدارة الصيانة والعملاء</div>
+    <div class="mt-5 w-28 h-1 rounded-full overflow-hidden bg-slate-800"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-sky-500 to-amber-400 animate-pulse"></div></div>
+  </div>
 
   <!-- Top Header (Connected badge removed) -->
   <header class="sticky top-0 z-30 bg-[#060913]/90 backdrop-blur-xl border-b border-slate-800/80">
@@ -107,6 +190,16 @@
       </div>
     </div>
   </header>
+
+  <div id="app-install-banner" class="max-w-2xl mx-auto px-4 pt-3 items-center justify-between gap-3 rounded-2xl" role="region" aria-label="تثبيت التطبيق">
+    <div class="flex items-center gap-2 min-w-0 rounded-2xl border border-sky-500/20 bg-gradient-to-r from-[#0c1628] to-[#101a2b] p-3 flex-1">
+      <div class="w-10 h-10 rounded-xl bg-slate-950 border border-amber-400/30 flex items-center justify-center text-amber-300 shrink-0">♛</div>
+      <div class="min-w-0"><p class="text-xs font-extrabold text-white">ثبّت الجنبيهي كتطبيق</p><p class="text-[10px] text-slate-400">وصول أسرع من الشاشة الرئيسية</p></div>
+    </div>
+    <button id="app-install-button" type="button" class="neon-btn text-white text-xs font-extrabold px-4 rounded-xl shrink-0">تثبيت</button>
+    <button id="app-install-dismiss" type="button" aria-label="إخفاء" class="text-slate-500 px-1">×</button>
+  </div>
+
 
   <!-- Firebase Alert Banner -->
   <div id="db-alert-banner" class="hidden max-w-2xl mx-auto px-4 pt-3">
@@ -1467,6 +1560,35 @@
         `;
       }).join('');
     }
+  </script>
+  <script>
+    // PWA install, splash, and service worker registration. App data logic is untouched.
+    let deferredInstallPrompt = null;
+    const installBanner = document.getElementById('app-install-banner');
+    const installBtn = document.getElementById('app-install-button');
+    const splash = document.getElementById('app-splash');
+    window.addEventListener('load', () => {
+      setTimeout(() => splash && splash.classList.add('hide'), 1100);
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+      }
+    });
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault(); deferredInstallPrompt = event;
+      if (installBanner) installBanner.classList.add('show');
+    });
+    installBtn?.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) {
+        alert('لو خيار التثبيت مش ظاهر، افتح قائمة Chrome واختر «إضافة إلى الشاشة الرئيسية».');
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installBanner?.classList.remove('show');
+    });
+    document.getElementById('app-install-dismiss')?.addEventListener('click', () => installBanner?.classList.remove('show'));
+    window.addEventListener('appinstalled', () => installBanner?.classList.remove('show'));
   </script>
 </body>
 </html>
